@@ -14,26 +14,27 @@ window.addEventListener('beforeinstallprompt', (event) => {
   deferredPrompt = event;
   console.log("📌 Install prompt event saved.");
 
-  // Tampilkan notifikasi untuk user
-  showInstallNotification();
+  // Tampilkan notifikasi untuk user setelah 3 detik
+  setTimeout(() => {
+    showInstallNotification();
+  }, 3000);
 });
 
-// ⏰ Munculkan notifikasi install setelah 3 detik
+// Munculkan notifikasi install PWA secara otomatis
 function showInstallNotification() {
-  setTimeout(() => {
-    if (deferredPrompt) {
-      alert("🚀 Tambahkan aplikasi ini ke layar utama!"); // Bisa diganti dengan toast UI
-      deferredPrompt.prompt(); // 🟢 Otomatis menampilkan prompt install
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log("✅ User accepted the install prompt");
-        } else {
-          console.log("❌ User dismissed the install prompt");
-        }
-        deferredPrompt = null; // Reset setelah digunakan
-      });
-    }
-  }, 3000); // ⏳ Tunggu 3 detik sebelum menampilkan notifikasi
+  if (deferredPrompt) {
+    alert("🚀 Tambahkan aplikasi ini ke layar utama!"); // Bisa diganti dengan toast UI
+    deferredPrompt.prompt();
+    
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log("✅ User accepted the install prompt");
+      } else {
+        console.log("❌ User dismissed the install prompt");
+      }
+      deferredPrompt = null; // Reset setelah digunakan
+    });
+  }
 }
 
 function animate() {
