@@ -1,40 +1,19 @@
 var title = document.querySelector('.title');
 var courseFeatureElements = document.querySelectorAll('.course-feature');
-var button = document.querySelector('#start-again');
+var button = document.querySelector('button');
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js')
-    .then(() => console.log("✅ Service Worker Registered"))
-    .catch(err => console.error("❌ Service Worker failed", err));
+    .then(() => console.log("Service Worker Registered"))
+    .catch(err => console.error("Service Worker failed", err));
 }
 
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredPrompt = event;
-  console.log("📌 Install prompt event saved.");
-
-  // Tampilkan notifikasi untuk user
-  showInstallNotification();
+  console.log("Install prompt saved.");
 });
-
-// ⏰ Munculkan notifikasi install setelah 3 detik
-function showInstallNotification() {
-  setTimeout(() => {
-    if (deferredPrompt) {
-      alert("🚀 Tambahkan aplikasi ini ke layar utama!"); // Bisa diganti dengan toast UI
-      deferredPrompt.prompt(); // 🟢 Otomatis menampilkan prompt install
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log("✅ User accepted the install prompt");
-        } else {
-          console.log("❌ User dismissed the install prompt");
-        }
-        deferredPrompt = null; // Reset setelah digunakan
-      });
-    }
-  }, 3000); // ⏳ Tunggu 3 detik sebelum menampilkan notifikasi
-}
 
 function animate() {
   title.classList.remove('animate-in');
