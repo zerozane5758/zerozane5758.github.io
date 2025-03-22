@@ -3,7 +3,14 @@ var courseFeatureElements = document.querySelectorAll('.course-feature');
 var button = document.querySelector('button');
 
 var deferredPrompt;
-navigator.serviceWorker.register('/sw.js');
+navigator.serviceWorker.register('/sw.js').then(() => {
+  console.log("Service Worker Registered");
+});
+
+// Pastikan elemen tersedia sebelum digunakan
+if (!title || !button || courseFeatureElements.length === 0) {
+  console.error("Elemen tidak ditemukan, pastikan HTML sudah benar.");
+}
 
 function animate() {
   title.classList.remove('animate-in');
@@ -53,13 +60,17 @@ animate();
 
 // Tangkap event "beforeinstallprompt" dan simpan untuk digunakan nanti
 window.addEventListener('beforeinstallprompt', function(event) {
-  console.log('beforeinstallprompt fired');
+  console.log('beforeinstallprompt event fired');
   event.preventDefault();
   deferredPrompt = event;
 
-  // Tampilkan notifikasi setelah 4 detik
+  // Tampilkan notifikasi setelah 4 detik hanya jika event tersedia
   setTimeout(function() {
-    showInstallNotification();
+    if (deferredPrompt) {
+      showInstallNotification();
+    } else {
+      console.warn("beforeinstallprompt tidak tersedia");
+    }
   }, 4000);
 });
 
@@ -70,7 +81,6 @@ function showInstallNotification() {
     return;
   }
 
-  // Minta izin notifikasi jika belum diberikan
   Notification.requestPermission().then(function(permission) {
     if (permission === "granted") {
       var notification = new Notification("Pasang Aplikasi", {
@@ -78,20 +88,24 @@ function showInstallNotification() {
         icon: "/src/images/icons/icon-192x192.png"
       });
 
-      // Ketika notifikasi diklik, munculkan prompt install
       notification.onclick = function() {
         if (deferredPrompt) {
           deferredPrompt.prompt();
+          
           deferredPrompt.userChoice.then(function(choiceResult) {
             if (choiceResult.outcome === 'accepted') {
-              console.log('User accepted the A2HS prompt');
+              console.log("User accepted the A2HS prompt");
             } else {
-              console.log('User dismissed the A2HS prompt');
+              console.log("User dismissed the A2HS prompt");
             }
             deferredPrompt = null;
           });
+        } else {
+          console.warn("Tidak ada prompt yang tersimpan.");
         }
       };
+    } else {
+      console.warn("Izin notifikasi ditolak.");
     }
   });
 }
