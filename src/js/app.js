@@ -3,14 +3,9 @@ var courseFeatureElements = document.querySelectorAll('.course-feature');
 var button = document.querySelector('button');
 
 var deferredPrompt;
-navigator.serviceWorker.register('/sw.js').then(() => {
-  console.log("Service Worker Registered");
-});
+var installButton = document.querySelector('#install-button');
 
-// Pastikan elemen tersedia sebelum digunakan
-if (!title || !button || courseFeatureElements.length === 0) {
-  console.error("Elemen tidak ditemukan, pastikan HTML sudah benar.");
-}
+navigator.serviceWorker.register('/sw.js');
 
 function animate() {
   title.classList.remove('animate-in');
@@ -58,57 +53,27 @@ function animate() {
 
 animate();
 
-// Tangkap event "beforeinstallprompt" dan simpan untuk digunakan nanti
 window.addEventListener('beforeinstallprompt', function(event) {
-  console.log('beforeinstallprompt event fired');
+  console.log('beforeinstallprompt fired');
   event.preventDefault();
   deferredPrompt = event;
-
-  // Tampilkan notifikasi setelah 4 detik hanya jika event tersedia
   setTimeout(function() {
-    if (deferredPrompt) {
-      showInstallNotification();
-    } else {
-      console.warn("beforeinstallprompt tidak tersedia");
-    }
+    installButton.style.display = 'block'; // Show the install button after 4 seconds
   }, 4000);
 });
 
-// Fungsi untuk menampilkan notifikasi install
-function showInstallNotification() {
-  if (!("Notification" in window)) {
-    console.warn("Browser tidak mendukung notifikasi.");
-    return;
-  }
-
-  Notification.requestPermission().then(function(permission) {
-    if (permission === "granted") {
-      var notification = new Notification("Pasang Aplikasi", {
-        body: "Klik untuk menambahkan aplikasi ke layar utama.",
-        icon: "/src/images/icons/icon-192x192.png"
-      });
-
-      notification.onclick = function() {
-        if (deferredPrompt) {
-          deferredPrompt.prompt();
-          
-          deferredPrompt.userChoice.then(function(choiceResult) {
-            if (choiceResult.outcome === 'accepted') {
-              console.log("User accepted the A2HS prompt");
-            } else {
-              console.log("User dismissed the A2HS prompt");
-            }
-            deferredPrompt = null;
-          });
-        } else {
-          console.warn("Tidak ada prompt yang tersimpan.");
-        }
-      };
+installButton.addEventListener('click', function() {
+  installButton.style.display = 'none'; // Hide the install button
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(function(choiceResult) {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('User accepted the A2HS prompt');
     } else {
-      console.warn("Izin notifikasi ditolak.");
+      console.log('User dismissed the A2HS prompt');
     }
+    deferredPrompt = null;
   });
-}
+});
 
 button.addEventListener('click', function() {
   animate();
