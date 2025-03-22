@@ -10,29 +10,6 @@ if ('serviceWorker' in navigator) {
 
 let deferredPrompt;
 
-// Tangkap event "beforeinstallprompt" dan simpan agar bisa dipanggil nanti
-window.addEventListener('beforeinstallprompt', (event) => {
-  event.preventDefault();
-  deferredPrompt = event;
-  console.log("📌 Install prompt event saved.");
-
-  // Langsung tampilkan prompt install setelah 3 detik tanpa mengganggu animasi
-  setTimeout(() => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'accepted') {
-          console.log("✅ User accepted the install prompt");
-        } else {
-          console.log("❌ User dismissed the install prompt");
-        }
-        deferredPrompt = null; // Reset setelah digunakan
-      });
-    }
-  }, 3000);
-});
-
 // Fungsi animasi tetap berjalan
 function animate() {
   title.classList.remove('animate-in');
@@ -79,6 +56,29 @@ function animate() {
 }
 
 animate();
+
+// Tangkap event "beforeinstallprompt" dan simpan agar bisa dipanggil nanti
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+  console.log("📌 Install prompt event saved.");
+
+  // Langsung tampilkan prompt install setelah 3 detik tanpa mengganggu animasi
+  setTimeout(() => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log("✅ User accepted the install prompt");
+        } else {
+          console.log("❌ User dismissed the install prompt");
+        }
+        deferredPrompt = null; // Reset setelah digunakan
+      });
+    }
+  }, 3000);
+});
 
 button.addEventListener('click', function() {
   animate();
