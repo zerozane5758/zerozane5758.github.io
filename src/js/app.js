@@ -9,34 +9,31 @@ if ('serviceWorker' in navigator) {
 }
 
 let deferredPrompt;
+
+// Tangkap event "beforeinstallprompt" dan simpan agar bisa dipanggil nanti
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredPrompt = event;
   console.log("📌 Install prompt event saved.");
 
-  // Tampilkan notifikasi untuk user setelah 3 detik
+  // Langsung tampilkan prompt install setelah 3 detik tanpa mengganggu animasi
   setTimeout(() => {
-    showInstallNotification();
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'accepted') {
+          console.log("✅ User accepted the install prompt");
+        } else {
+          console.log("❌ User dismissed the install prompt");
+        }
+        deferredPrompt = null; // Reset setelah digunakan
+      });
+    }
   }, 3000);
 });
 
-// Munculkan notifikasi install PWA secara otomatis
-function showInstallNotification() {
-  if (deferredPrompt) {
-    alert("🚀 Tambahkan aplikasi ini ke layar utama!"); // Bisa diganti dengan toast UI
-    deferredPrompt.prompt();
-    
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log("✅ User accepted the install prompt");
-      } else {
-        console.log("❌ User dismissed the install prompt");
-      }
-      deferredPrompt = null; // Reset setelah digunakan
-    });
-  }
-}
-
+// Fungsi animasi tetap berjalan
 function animate() {
   title.classList.remove('animate-in');
   for (var i = 0; i < courseFeatureElements.length; i++) {
