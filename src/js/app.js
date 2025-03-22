@@ -2,7 +2,18 @@ var title = document.querySelector('.title');
 var courseFeatureElements = document.querySelectorAll('.course-feature');
 var button = document.querySelector('button');
 
-navigator.serviceWorker.register('/sw.js');
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+    .then(() => console.log("Service Worker Registered"))
+    .catch(err => console.error("Service Worker failed", err));
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (event) => {
+  event.preventDefault();
+  deferredPrompt = event;
+  console.log("Install prompt saved.");
+});
 
 function animate() {
   title.classList.remove('animate-in');
