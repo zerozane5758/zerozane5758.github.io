@@ -4,8 +4,8 @@ var button = document.querySelector('#start-again');
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js')
-    .then(() => console.log("✅ Service Worker Registered"))
-    .catch(err => console.error("❌ Service Worker failed", err));
+    .then(() => console.log("Service Worker Registered"))
+    .catch(err => console.error("Service Worker failed", err));
 }
 
 let deferredPrompt;
@@ -61,7 +61,7 @@ animate();
 window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredPrompt = event;
-  console.log("📌 Install prompt event saved.");
+  console.log("Install prompt event saved.");
 
   // Langsung tampilkan prompt install setelah 3 detik tanpa mengganggu animasi
   setTimeout(() => {
@@ -70,9 +70,9 @@ window.addEventListener('beforeinstallprompt', (event) => {
       
       deferredPrompt.userChoice.then((choiceResult) => {
         if (choiceResult.outcome === 'accepted') {
-          console.log("✅ User accepted the install prompt");
+          console.log("User accepted the install prompt");
         } else {
-          console.log("❌ User dismissed the install prompt");
+          console.log("User dismissed the install prompt");
         }
         deferredPrompt = null; // Reset setelah digunakan
       });
