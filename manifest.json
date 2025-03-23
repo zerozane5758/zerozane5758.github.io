@@ -38,7 +38,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/index.html",
+  "start_url": "/coba.html",
   "scope": ".",
   "display": "standalone",
   "background_color": "#fff",
