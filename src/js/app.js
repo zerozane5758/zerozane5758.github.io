@@ -1,62 +1,31 @@
-var title = document.querySelector('.title');
-var courseFeatureElements = document.querySelectorAll('.course-feature');
-var button = document.querySelector('button');
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').then(function () {
+    console.log('Service Worker registered!');
+  });
+}
 
+var sharedMomentsArea = document.querySelector('#shared-moments');
 var deferredPrompt;
 var installButton = document.querySelector('#install-button');
 
+function createCard(post) {
+  var cardWrapper = document.createElement('div');
+  cardWrapper.className = 'card';
 
+  var cardTitle = document.createElement('h2');
+  cardTitle.textContent = post.title;
+  cardWrapper.appendChild(cardTitle);
 
-navigator.serviceWorker.register('/sw.js');
+  var cardBody = document.createElement('p');
+  cardBody.textContent = post.body;
+  cardWrapper.appendChild(cardBody);
 
+  var postId = document.createElement('p');
+  postId.textContent = `Post ID: ${post.id}`;
+  cardWrapper.appendChild(postId);
 
-
-function animate() {
-  title.classList.remove('animate-in');
-  for (var i = 0; i < courseFeatureElements.length; i++) {
-    courseFeatureElements[i].classList.remove('animate-in');
-  }
-  button.classList.remove('animate-in');
-
-  setTimeout(function () {
-    title.classList.add('animate-in');
-  }, 1000);
-
-  setTimeout(function () {
-    courseFeatureElements[0].classList.add('animate-in');
-  }, 3000);
-
-  setTimeout(function () {
-    courseFeatureElements[1].classList.add('animate-in');
-  }, 4500);
-
-  setTimeout(function () {
-    courseFeatureElements[2].classList.add('animate-in');
-  }, 6000);
-
-  setTimeout(function () {
-    courseFeatureElements[3].classList.add('animate-in');
-  }, 7500);
-
-  setTimeout(function () {
-    courseFeatureElements[4].classList.add('animate-in');
-  }, 9000);
-
-  setTimeout(function () {
-    courseFeatureElements[5].classList.add('animate-in');
-  }, 10500);
-
-  setTimeout(function () {
-    courseFeatureElements[6].classList.add('animate-in');
-  }, 12000);
-
-  setTimeout(function () {
-    button.classList.add('animate-in');
-  }, 13500);
+  sharedMomentsArea.appendChild(cardWrapper);
 }
-
-animate();
-
 
 window.addEventListener('beforeinstallprompt', function(event) {
   console.log('beforeinstallprompt fired');
@@ -78,6 +47,13 @@ installButton.addEventListener('click', function() {
   });
 });
 
-button.addEventListener('click', function() {
-  animate();
-});
+fetch('https://jsonplaceholder.typicode.com/posts')
+  .then(function (res) {
+    return res.json();
+  })
+  .then(function (data) {
+    data.forEach(createCard);
+  })
+  .catch(function (err) {
+    console.log('Error fetching posts:', err);
+  });

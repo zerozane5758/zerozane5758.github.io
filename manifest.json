@@ -1,6 +1,6 @@
 {
-  "name": "PWA Demo",
-  "short_name": "PWA",
+  "name": "MyBlogApp",
+  "short_name": "BlogApp",
   "icons": [
     {
       "src": "/src/images/icons/car1.png",
